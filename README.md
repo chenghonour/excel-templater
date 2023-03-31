@@ -132,7 +132,7 @@ _Result_
 import (
 ...
 
-	"github.com/geoirb/excel-templater"
+	"github.com/chenghonour/excel-templater"
 ...
 )
 

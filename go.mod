@@ -1,4 +1,4 @@
-module github.com/geoirb/excel-templater
+module github.com/chenghonour/excel-templater
 
 go 1.19
 
