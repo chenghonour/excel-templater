@@ -1,7 +1,6 @@
 package excel
 
 import (
-	"bytes"
 	"fmt"
 	"io"
 
@@ -51,7 +50,7 @@ func NewTemplater(
 }
 
 // FillIn file by templatePath path with payload data.
-func (t *templater) FillIn(templatePath string, payload interface{}) (r io.Reader, err error) {
+func (t *templater) FillIn(templatePath string, payload interface{}) (fileByte []byte, err error) {
 	f, err := excelize.OpenFile(templatePath)
 	if err != nil {
 		return
@@ -65,17 +64,16 @@ func (t *templater) FillIn(templatePath string, payload interface{}) (r io.Reade
 		}
 	}
 
-	var result bytes.Buffer
-	if err = f.Write(&result); err != nil {
-		err = fmt.Errorf("save template to tmp file err: %s", err)
+	buffer, err := f.WriteToBuffer()
+	if err != nil {
+		err = fmt.Errorf("save template to buffer err: %s", err)
 		return
 	}
-	r = &result
-	return
+	return buffer.Bytes(), nil
 }
 
 // FillInByReader file by templateFile Reader with payload data.
-func (t *templater) FillInByReader(templateFile io.Reader, payload interface{}) (r io.Reader, err error) {
+func (t *templater) FillInByReader(templateFile io.Reader, payload interface{}) (fileByte []byte, err error) {
 	f, err := excelize.OpenReader(templateFile)
 	if err != nil {
 		return
@@ -89,13 +87,12 @@ func (t *templater) FillInByReader(templateFile io.Reader, payload interface{}) 
 		}
 	}
 
-	var result bytes.Buffer
-	if err = f.Write(&result); err != nil {
-		err = fmt.Errorf("save template to tmp file err: %s", err)
+	buffer, err := f.WriteToBuffer()
+	if err != nil {
+		err = fmt.Errorf("save template to buffer err: %s", err)
 		return
 	}
-	r = &result
-	return
+	return buffer.Bytes(), nil
 }
 
 // filling in on sheet.

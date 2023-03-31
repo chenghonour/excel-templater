@@ -147,7 +147,7 @@ func main() {
 	}
 
 	// templateFile - path to template
-	r, err := templater.FillIn(templateFile, payload)
+	fileByte, err := templater.FillIn(templateFile, payload)
 	if err != nil {
 		panic(err)
 	}

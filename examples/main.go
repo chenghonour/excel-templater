@@ -3,8 +3,8 @@ package main
 import (
 	_ "embed"
 	"encoding/json"
-
-	"github.com/xuri/excelize/v2"
+	"fmt"
+	"os"
 
 	"github.com/chenghonour/excel-templater"
 )
@@ -26,16 +26,14 @@ func main() {
 		panic(err)
 	}
 
-	r, err := templater.FillIn(templateFile, payload)
-	if err != nil {
-		panic(err)
-	}
-	file, err := excelize.OpenReader(r)
+	fileByte, err := templater.FillIn(templateFile, payload)
 	if err != nil {
 		panic(err)
 	}
 
-	if err = file.SaveAs(resultFile); err != nil {
-		panic(err)
+	// save bytes to file
+	err = os.WriteFile(resultFile, fileByte, 0644)
+	if err != nil {
+		fmt.Println("Error writing file:", err)
 	}
 }
