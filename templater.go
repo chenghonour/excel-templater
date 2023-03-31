@@ -74,6 +74,30 @@ func (t *templater) FillIn(templatePath string, payload interface{}) (r io.Reade
 	return
 }
 
+// FillInByReader file by templateFile Reader with payload data.
+func (t *templater) FillInByReader(templateFile io.Reader, payload interface{}) (r io.Reader, err error) {
+	f, err := excelize.OpenReader(templateFile)
+	if err != nil {
+		return
+	}
+
+	sheets := f.GetSheetList()
+	for _, sheet := range sheets {
+		if err = t.fillInSheet(f, sheet, payload); err != nil {
+			err = fmt.Errorf("sheet: %s %s", sheet, err)
+			return
+		}
+	}
+
+	var result bytes.Buffer
+	if err = f.Write(&result); err != nil {
+		err = fmt.Errorf("save template to tmp file err: %s", err)
+		return
+	}
+	r = &result
+	return
+}
+
 // filling in on sheet.
 func (t *templater) fillInSheet(file *excelize.File, sheet string, payload interface{}) (err error) {
 	rows, err := file.GetRows(sheet)
